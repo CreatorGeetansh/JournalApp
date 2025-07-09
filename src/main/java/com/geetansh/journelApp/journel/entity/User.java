@@ -26,4 +26,5 @@ public class User {
 
     @DBRef //foreign key ref.
     private List<JournalEntry> journalEntries = new ArrayList<>();
+    private List<String> roles;
 }
