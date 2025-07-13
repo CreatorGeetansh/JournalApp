@@ -30,7 +30,7 @@ public class JournalEntryService {
         journalEntry.setDate(LocalDateTime.now());
         JournalEntry saved = journalEntryRepository.save(journalEntry);
         user.getJournalEntries().add((saved));
-        userService.saveEntry(user);
+        userService.saveUser(user);
     }
 
     public void saveEntry(JournalEntry journalEntry){
@@ -45,10 +45,25 @@ public class JournalEntryService {
         return journalEntryRepository.findById(id);
     }
 
-    public void deleteByID(ObjectId id, String userName){
-        User user = userService.findByUserName(userName);
-        user.getJournalEntries().removeIf(x -> x.getId().equals(id));  //lambda expression in Spring Boot
-        userService.saveEntry(user);  //save
-        journalEntryRepository.deleteById(id);
+    @Transactional
+    public boolean deleteByID(ObjectId id, String userName){
+        boolean removed = false;
+        try {
+            User user = userService.findByUserName(userName);
+            removed = user.getJournalEntries().removeIf(x -> x.getId().equals(id));  //lambda expression in Spring Boot
+            if (removed){
+                userService.saveUser(user);  //save
+                journalEntryRepository.deleteById(id);
+            }
+            return removed;
+        }
+        catch (Exception e){
+            System.out.println(e);
+            throw new RuntimeException("An error occurred while deleting the entries. try again in sometime.");
+        }
     }
+
+//    public List<JournalEntry> findByUserName(String userName){
+//
+//    }
 }

@@ -42,7 +42,7 @@ public class UserController {
          User userInDb = userService.findByUserName(userName);
          if (userInDb != null){
              userInDb.setPassword(user.getPassword());
-             userService.saveEntry(userInDb);
+             userService.saveNewuser(userInDb);
          }
          return new ResponseEntity<>(HttpStatus.OK);
      }
